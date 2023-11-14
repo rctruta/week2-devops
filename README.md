@@ -28,7 +28,7 @@ Download or Clone the repo https://github.com/sb2nov/corise-zignite-devops-cc/tr
 
 Create a Docker File within the cloned Repository
 ```
-vim Dockerfile
+nano Dockerfile
 ```
 
 The Python application directory structure should now look like the following:
@@ -49,7 +49,9 @@ quote_disp
 |____ Dockerfile
 ```
 
-Let's create a basic container in each of the directories
+Let's create a basic container in each of the directories. 
+The following code should be included in the `Dockerfile`:
+
 ```
 FROM python:3.8-slim-buster
 COPY . /app
@@ -84,14 +86,14 @@ Run Docker Container
 With the Docker images created, let’s get the containers up and running
 ```
 cd quote_gen
-docker run --name quote-gen-container -p 84:84 quote-gen-service
+docker run --name quote-gen-container -p 5000:5000 quote-gen-service
 ```
 ```
 cd quote_disp
-docker run --name quote-disp-container -p 85:85 quote-disp-service
+docker run --name quote-disp-container -p 5001:5001 quote-disp-service
 ```
 
-Let’s run docker container ls to get a list of containers created
+Let’s run `docker container ls` to get a list of containers created
 
 Create Docker Network
 
@@ -160,7 +162,10 @@ You see the following output -
 ]
 ```
 
-Let's see if the dockers are communicating
+Let's see if the dockers are communicating.
+
+`[TODO: How do we see if they are communicating? Which command do we run to see the output below?]`
+
 ```
 StatusCode        : 200
 StatusDescription : OK
@@ -191,7 +196,11 @@ RawContentLength  : 503
 ```
 They seem to be working!
 
-Let's create a Docker Compose Manifest to orchestrate our services
+
+Let's create a Docker Compose Manifest to orchestrate our services. To accomplish this, create a new file 
+`docker-compose.yml` with the content below.
+
+`nano docker-compose.yml` -- and edit the file with the content below:
 
 ```
 version: "3.7"
@@ -207,7 +216,7 @@ services:
     expose:
       - "5000"
     ports:
-      - "5001:5000"
+      - "5001:5001"
     depends_on:
       - web1
 ```
@@ -222,7 +231,7 @@ Eg - Our website is a service, we can have a database service or a unit testing 
 
 Under service, we have our website - service name, build - looks for a docker image, context - specifies where to look
 
-ports: -80:80
+ports: -5000:5000
 
 Run Docker Compose
 ```
@@ -258,3 +267,15 @@ disp  |  * Debugger PIN: 112-266-209
 ```
 
 ## You can find a link to the Docker Compose tutorial https://docs.docker.com/compose/gettingstarted/
+
+```
+`[TODO: The instructions for killing the running containers need to come somewhere, before creating the network.
+
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+Also, `docker compose down -v` to clean up.
+
+Maybe it's also worth mentioning that `docker-compose` and `docker compose` can be used interchangeably, to avoid confusion. And to check the docs when in doubt. :)]`
+```
+
